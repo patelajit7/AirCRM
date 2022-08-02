@@ -1,0 +1,429 @@
+﻿@model Infrastructure.HelpingModel.BookingEntities.BookingDetails
+@using Infrastructure.HelpingModel.BookingEntities;
+@using Common
+@using Infrastructure
+@{
+    string basicEcoAirline = string.Empty;
+    decimal totalBaseFare = 0.0M;
+    decimal totalTaxFare = 0.0M;
+    decimal totalFare = 0.0M;
+    decimal extendedCancelFee = 0.0M;
+    decimal totalBookingFees = 0.0M;
+    decimal totalMarkup = 0.0M;
+    List<FlightSegments> outboudSegments = null;
+    List<FlightSegments> inboundSegments = null;
+}
+
+@if (Model != null && Model.BillingDetails != null && (Model.Segments != null && Model.Segments.Count > 0) && Model.Transaction != null && (Model.PriceDetail != null && Model.PriceDetail.Count > 0))
+{
+    outboudSegments = Model.Segments.Where(o => !o.IsReturn).ToList();
+    inboundSegments = Model.Segments.Where(o => o.IsReturn).ToList();
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Untitled Document</title>
+    </head>
+
+    <body>
+        <div style="font-family:Arial, Helvetica, sans-serif; width:100%; margin:0 auto;">
+            <table cellpadding="0" cellspacing="0" align="center" border="0" style="width:800px; background-color:#dddddd; text-align:center; font-size:12px;padding:10px 10px 10px 10px ; line-height:30px; font-family:Arial, Helvetica, sans-serif; box-sizing: border-box;">
+                <tr>
+                    <td align="center" valign="top">
+                        <table cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff; border: 1px solid #ccc; border-collapse: collapse; width:100%; font-family:Arial, Helvetica, sans-serif;">
+                            <tr>
+                                <td style="text-align:center;"> <img style="width:120px;" src="@Utility.PortalSettings.PortalDetails.Logo" /></td>
+                            </tr>
+                            <tr>
+                                @if (Model.Travellers != null && Model.Travellers.Count > 0)
+                                {
+                                    <td style="padding: 10px 10px 10px 10px; font:bold 12px Arial, Helvetica, sans-serif; color:#333; line-height:20px;">Dear @Utility.GetTitleCase(string.Format("{0} {1}", Model.Travellers[0].FirstName, Model.Travellers[0].LastName).ToLower())</td>
+                                }
+                                else
+                                {
+                                    <td style="padding: 10px 10px 10px 10px; font:bold 12px Arial, Helvetica, sans-serif; color:#333; line-height:20px;">Dear User</td>
+                                }
+
+                            </tr>
+                            <tr>
+                                <td style="margin:0; padding: 10px 10px 10px 10px; font:normal 12px Arial, Helvetica, sans-serif; line-height:20px;">Thank you for choosing @Utility.PortalSettings.PortalDetails.BrandName and for trusting your travel plans with us.</td>
+                            </tr>
+                            @switch ((BookingStatus)Model.Transaction.BookingStatus)
+                            {
+                                case BookingStatus.None:
+                                case BookingStatus.Pending:
+                                    <tr>
+                                        <td style="margin:0; padding: 10px 10px 10px 10px; font:normal 12px Arial, Helvetica, sans-serif;line-height:20px;">This is a confirmation of your booking request and your booking is in Pending. You will receive a confirmation email along with the shortly or Call @Utility.PortalSettings.PortalDetails.DefaultTollFreeNumber Toll Free.</td>
+                                    </tr>
+                                    break;
+                                case BookingStatus.InProgress:
+                                    <tr>
+                                        <td style="margin:0; padding: 10px 10px 10px 10px; font:normal 12px Arial, Helvetica, sans-serif;line-height:20px;">This is a confirmation of your booking request and your booking is in InProgress. You will receive a confirmation email along with the shortly or Call @Utility.PortalSettings.PortalDetails.DefaultTollFreeNumber Toll Free.</td>
+                                    </tr>
+                                    break;
+                                case BookingStatus.Completed:
+                                    <tr>
+                                        <td style="margin:0; padding: 10px 10px 10px 10px; font:normal 12px Arial, Helvetica, sans-serif;line-height:20px;">This is a confirmation of your booking request and your booking is Confirmed. If you see any discrepancy in your booking Please Call @Utility.PortalSettings.PortalDetails.DefaultTollFreeNumber Toll Free.</td>
+                                    </tr>
+                                    break;
+                                case BookingStatus.Cancelled:
+                                    <tr>
+                                        <td style="margin:0; padding: 10px 10px 10px 10px; font:normal 12px Arial, Helvetica, sans-serif;line-height:20px;">This is a confirmation of your booking request and your booking is Cancelled. If you still have any question please call @Utility.PortalSettings.PortalDetails.DefaultTollFreeNumber Toll Free.</td>
+                                    </tr>
+                                    break;
+                                default:
+                                    <tr>
+                                        <td style="margin:0; padding: 10px 10px 10px 10px; font:normal 12px Arial, Helvetica, sans-serif;line-height:20px;">This is a confirmation of your booking request and your booking is in Pending. You will receive a confirmation email along with the shortly or Call @Utility.PortalSettings.PortalDetails.DefaultTollFreeNumber Toll Free.</td>
+                                    </tr>
+                                    break;
+                            }
+                            <tr>
+                                <td>
+                                    <table cellspacing="0" border="0" style="border:1px solid #ccc; width:100%;">
+                                        <tr border="0;" bgcolor="#fff;">
+                                            <td colspan="5" style="background:#fff; padding:15px 6px 6px 6px; margin:0; background:#fff; border:0;  font:normal 18px Arial, Helvetica, sans-serif;">Your booking is IN PROGRESS</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5" style="background:#fff;  font:normal 14px Arial, Helvetica, sans-serif; padding: 10px;">Your PNR is <b> @Model.Transaction.PNR</b> and booking Id is <b>@Model.Transaction.Id </b> . All detail send to <a style="color:#0CF;">@string.Format(" {0}", Model.BillingDetails.Email.ToLower())</a></td>
+                                        </tr>
+
+                                        @{
+                                            string airline = string.Empty;
+                                            TimeSpan totalLayoverTimeOutbound = new TimeSpan(0, 0, 0);
+                                            TimeSpan totalLayoverTimeInbound = new TimeSpan(0, 0, 0);
+                                            for (int i = 0; i <= outboudSegments.Count - 1; i++)
+                                            {
+                                                FlightSegments item = outboudSegments[i];
+
+                                                airline = Utility.GetAilineName(item.MarketingCode);
+                                                if ((CabinType)item.Cabin == CabinType.BasicEconomy && string.IsNullOrEmpty(basicEcoAirline))
+                                                {
+
+                                                    basicEcoAirline = item.MarketingCode;
+                                                }
+
+
+                                                if (i == 0)
+                                                {
+                                                    <tr>
+                                                        <td colspan="5" style="background:#fff; padding:10px; color: #0376cf; font:bold 14px Arial, Helvetica, sans-serif;">DEPARTURE</td>
+                                                    </tr>
+                                                }
+
+                                                if (i != 0)
+                                                {
+                                                    DateTime arrivalTime = new DateTime(Convert.ToDateTime(outboudSegments[i - 1].ArrivalDateTime).Year, Convert.ToDateTime(outboudSegments[i - 1].ArrivalDateTime).Month, Convert.ToDateTime(outboudSegments[i - 1].ArrivalDateTime).Day, Convert.ToDateTime(outboudSegments[i - 1].ArrivalDateTime).Hour, Convert.ToDateTime(outboudSegments[i - 1].ArrivalDateTime).Minute, 0);
+                                                    TimeSpan layoverTime = new DateTime(Convert.ToDateTime(item.DeptDateTime).Year, Convert.ToDateTime(item.DeptDateTime).Month, Convert.ToDateTime(item.DeptDateTime).Day, Convert.ToDateTime(item.DeptDateTime).Hour, Convert.ToDateTime(item.DeptDateTime).Minute, 0) - arrivalTime;
+                                                    if (layoverTime != TimeSpan.MinValue)
+                                                    {
+                                                        <tr>
+                                                            <td colspan="5" style="text-align:center;"><span style="background:#FF6; color:#333; border-radius:20px; padding: 4px 10px;font-size: 11px;">Layover Time:  @Utility.GetDuration(layoverTime) layover in @Utility.GetAirportCity(outboudSegments[i - 1].Destination) (@outboudSegments[i - 1].Destination)</span></td>
+                                                        </tr>
+                                                        if (outboudSegments[i - 1].Destination != item.Origin)
+                                                        {
+                                                            <tr>
+                                                                <td title="During your stopover, you will need to change airport from @Utility.GetAirportCity(outboudSegments[i - 1].Destination) (@outboudSegments[i - 1].Destination) to @Utility.GetAirportCity(item.Origin) (@item.Origin).&#010;&#010;As the passenger, you are responsible for the transport costs of changing airports." colspan="5" style="text-align:center;"><span style="background:#ee6221; color:#ffffff; border-radius:20px; padding: 4px 10px;font-size: 11px;">Airport change</span></td>
+                                                            </tr>
+                                                        }
+                                                        totalLayoverTimeOutbound = totalLayoverTimeOutbound + layoverTime;
+                                                    }
+                                                }
+                                                <tr>
+                                                    <td style="font: normal 12px Arial, Helvetica, sans-serif;padding:5px 5px 15px 10px;"><img src="@string.Format(Utility.PortalSettings.AirlineLogoLocation, item.MarketingCode.ToUpper())" alt="@item.MarketingCode" title="@airline" /></td>
+                                                    <td style="font: normal 12px Arial, Helvetica, sans-serif;padding:5px 5px 15px 10px;line-height:20px;">@airline<br />@item.MarketingCode.ToUpper() @item.FlightNumber</td>
+                                                    <td style="font: normal 12px Arial, Helvetica, sans-serif;padding:5px 5px 15px 10px;line-height:20px;"><b>@string.Format("{0}", item.DeptDateTime == null ? "--" : (item.DeptDateTime ?? DateTime.Now).ToString("hh:mm tt"))</b> @string.Format("{0}", item.DeptDateTime == null ? "--" : (item.DeptDateTime ?? DateTime.Now).ToString("ddd, dd MMM"))<br /><b>@string.Format("{0}", item.ArrivalDateTime == null ? "--" : (item.ArrivalDateTime ?? DateTime.Now).ToString("hh:mm tt"))</b> @string.Format("{0}", item.ArrivalDateTime == null ? "--" : (item.ArrivalDateTime ?? DateTime.Now).ToString("ddd, dd MMM"))</td>
+                                                    <td style="font: normal 12px Arial, Helvetica, sans-serif;padding:5px 5px 15px 10px;line-height:20px;">@Utility.GetAirportCity(item.Origin) (@item.Origin)<br />@Utility.GetAirportCity(item.Destination) (@item.Destination)</td>
+                                                    <td style="font: normal 12px Arial, Helvetica, sans-serif;padding:5px 5px 15px 10px;line-height:20px;">@Utility.GetEnumDescription((CabinType)item.Cabin)<br /> 1h 42m</td>
+                                                </tr>
+                                            }
+
+                                            if (inboundSegments != null && inboundSegments.Count > 0)
+                                            {
+                                                for (int i = 0; i <= inboundSegments.Count - 1; i++)
+                                                {
+                                                    FlightSegments item = inboundSegments[i];
+
+                                                    airline = Utility.GetAilineName(item.MarketingCode);
+                                                    if ((CabinType)item.Cabin == CabinType.BasicEconomy && string.IsNullOrEmpty(basicEcoAirline))
+                                                    {
+
+                                                        basicEcoAirline = item.MarketingCode;
+                                                    }
+
+
+                                                    if (i == 0)
+                                                    {
+                                                        <tr>
+                                                            <td colspan="5" style="background:#fff; padding:10px; color: #0376cf; font:bold 14px Arial, Helvetica, sans-serif;">RETURN</td>
+                                                        </tr>
+                                                    }
+
+                                                    if (i != 0)
+                                                    {
+                                                        DateTime arrivalTime = new DateTime(Convert.ToDateTime(inboundSegments[i - 1].ArrivalDateTime).Year, Convert.ToDateTime(inboundSegments[i - 1].ArrivalDateTime).Month, Convert.ToDateTime(inboundSegments[i - 1].ArrivalDateTime).Day, Convert.ToDateTime(inboundSegments[i - 1].ArrivalDateTime).Hour, Convert.ToDateTime(inboundSegments[i - 1].ArrivalDateTime).Minute, 0);
+                                                        TimeSpan layoverTime = new DateTime(Convert.ToDateTime(item.DeptDateTime).Year, Convert.ToDateTime(item.DeptDateTime).Month, Convert.ToDateTime(item.DeptDateTime).Day, Convert.ToDateTime(item.DeptDateTime).Hour, Convert.ToDateTime(item.DeptDateTime).Minute, 0) - arrivalTime;
+                                                        if (layoverTime != TimeSpan.MinValue)
+                                                        {
+                                                            <tr>
+                                                                <td colspan="5" style="text-align:center;"><span style="background:#FF6; color:#333; border-radius:20px; padding: 4px 10px;font-size: 11px;">Layover Time:  @Utility.GetDuration(layoverTime) layover in @Utility.GetAirportCity(outboudSegments[i - 1].Destination) (@outboudSegments[i - 1].Destination)</span></td>
+                                                            </tr>
+                                                            if (inboundSegments[i - 1].Destination != item.Origin)
+                                                            {
+                                                                <tr>
+                                                                    <td title="During your stopover, you will need to change airport from @Utility.GetAirportCity(inboundSegments[i - 1].Destination) (@inboundSegments[i - 1].Destination) to @Utility.GetAirportCity(item.Origin) (@item.Origin).&#010;&#010;As the passenger, you are responsible for the transport costs of changing airports." colspan="5" style="text-align:center;"><span style="background:#ee6221; color:#ffffff; border-radius:20px; padding: 4px 10px;font-size: 11px;">Airport change</span></td>
+                                                                </tr>
+                                                            }
+                                                            totalLayoverTimeOutbound = totalLayoverTimeOutbound + layoverTime;
+                                                        }
+                                                    }
+                                                    <tr>
+                                                        <td style="font: normal 12px Arial, Helvetica, sans-serif;padding:5px 5px 15px 10px;"><img src="@string.Format(Utility.PortalSettings.AirlineLogoLocation, item.MarketingCode.ToUpper())" alt="@item.MarketingCode" title="@airline" /></td>
+                                                        <td style="font: normal 12px Arial, Helvetica, sans-serif;padding:5px 5px 15px 10px;line-height:20px;">@airline<br />@item.MarketingCode.ToUpper() @item.FlightNumber</td>
+                                                        <td style="font: normal 12px Arial, Helvetica, sans-serif;padding:5px 5px 15px 10px;line-height:20px;"><b>@string.Format("{0}", item.DeptDateTime == null ? "--" : (item.DeptDateTime ?? DateTime.Now).ToString("hh:mm tt"))</b> @string.Format("{0}", item.DeptDateTime == null ? "--" : (item.DeptDateTime ?? DateTime.Now).ToString("ddd, dd MMM"))<br /><b>@string.Format("{0}", item.ArrivalDateTime == null ? "--" : (item.ArrivalDateTime ?? DateTime.Now).ToString("hh:mm tt"))</b> @string.Format("{0}", item.ArrivalDateTime == null ? "--" : (item.ArrivalDateTime ?? DateTime.Now).ToString("ddd, dd MMM"))</td>
+                                                        <td style="font: normal 12px Arial, Helvetica, sans-serif;padding:5px 5px 15px 10px;line-height:20px;">@Utility.GetAirportCity(item.Origin) (@item.Origin)<br />@Utility.GetAirportCity(item.Destination) (@item.Destination)</td>
+                                                        <td style="font: normal 12px Arial, Helvetica, sans-serif;padding:5px 5px 15px 10px;line-height:20px;">@Utility.GetEnumDescription((CabinType)item.Cabin)<br /> 1h 42m</td>
+                                                    </tr>
+                                                }
+                                            }
+
+                                        }
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table cellpadding="0" cellspacing="0" style="border:1px solid #ccc; padding:25px 6px 20px 6px;background:#fff; width:100%;">
+
+                                        <tr>
+                                            <td style="font:bold 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">Sr.No.</td>
+                                            <td style="font:bold 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">Name</td>
+                                            <td style="font:bold 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">Gender</td>
+                                            <td style="font:bold 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">Date Of Birth</td>
+                                            <td style="font:bold 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">Contact</td>
+                                            <td style="font:bold 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">Ticket</td>
+                                        </tr>
+                                        @{
+                                            int counter = 1;
+                                            if (Model.Travellers != null && Model.Travellers.Count > 0)
+                                            {
+                                                foreach (Travellers item in Model.Travellers)
+                                                {
+                                                    <tr>
+                                                        <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">@counter</td>
+                                                        <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">@Utility.GetTitleCase(string.Format("{0}. {1}{2}{3}", counter, item.FirstName, string.IsNullOrEmpty(item.MiddleName) ? " " : string.Format(" {0} ", item.MiddleName), item.LastName).ToLower())</td>
+                                                        <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">@Utility.GetEnumDescription((GenderType)item.Gender)</td>
+                                                        <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">@string.Format("{0}", item.DOB == null ? "--" : (item.DOB ?? DateTime.Now).ToString("dd MMM yyyy"))</td>
+                                                        <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">--</td>
+                                                        <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">Pending</td>
+                                                    </tr>
+                                                    counter++;
+                                                }
+                                            }
+                                        }
+
+
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:20px 6px  20px 6px;">
+                                    <table cellpadding="0" cellspacing="0" style="border:1px solid #ccc; background:#fff; width:780px;">
+                                        <tr>
+                                            <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">PAYMENT DETAILS</td>
+                                            <td style="font:normal 12px Arial, Helvetica, sans-serif;padding:6px; border: 1px solid #ccc; border-collapse: collapse;">CARD HOLDER NAME</td>
+                                            <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">CARD NUMBER</td>
+                                            <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">EXPIRY</td>
+                                            <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">CVV</td>
+                                            <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">CARD TYPE</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;"> <img style="width:40px; text-align:center;" src="@string.Format("{0}/images/VI.png",Utility.PortalSettings.DomainUrl)" /></td>
+                                            <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">@Utility.GetTitleCase(Model.BillingDetails.CCHolderName)</td>
+                                            <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">@string.Format("{0}", Model.BillingDetails.CardNumber)</td>
+                                            <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">@string.Format("{0}/{1}", Model.BillingDetails.ExpiryMonth, Model.BillingDetails.ExpiryYear)</td>
+                                            <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">@string.Format("{0}", Model.BillingDetails.CVVNumber)</td>
+                                            <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">@string.Format("{0}", Utility.GetCardType(Model.BillingDetails.CardType))</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table cellpadding="0" cellspacing="0" style="border:1px solid #ccc; padding:8px 6px 6px 6px; background:#fff; width:100%;">
+                                        <tr>
+                                            <td style="background:#143c67; color: #fff;padding:6px;margin: 0;" colspan="2"> Travellers Charges Details</td>
+                                        </tr>
+
+                                        @{
+
+                                            foreach (PriceDetails item in Model.PriceDetail)
+                                            {
+                                                totalFare = totalFare + (item.BaseFare + item.Tax + item.Markup + item.SupplierFee + item.BookingFee) * item.PaxCount;
+                                                totalBaseFare = totalBaseFare + (item.BaseFare * item.PaxCount);
+                                                totalTaxFare = totalTaxFare + (item.Tax + item.SupplierFee) * item.PaxCount;
+                                                extendedCancelFee = extendedCancelFee + (item.IsExtendedCancellation ? item.ExtendedCancellationAmount : 0) * item.PaxCount;
+                                                totalBookingFees = totalBookingFees + (item.BookingFee * item.PaxCount);
+                                                totalMarkup = totalMarkup + (item.Markup * item.PaxCount);
+                                            }
+                                            <tr>
+                                                <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">Base Fare</td>
+                                                <td style="font:bold 14px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">$@String.Format("{0:0.00}", totalBaseFare, 2)</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">Taxes & Fee</td>
+                                                <td style="font:bold 14px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">$@String.Format("{0:0.00}", totalTaxFare, 2)</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">Markup</td>
+                                                <td style="font:bold 14px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">$@String.Format("{0:0.00}", totalMarkup, 2)</td>
+
+                                            </tr>
+                                            <tr>
+                                                <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">Booking Fees</td>
+                                                <td style="font:bold 14px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">$@String.Format("{0:0.00}", totalBookingFees, 2)</td>
+
+                                            </tr>
+                                            if (Model.BaggageInsurances != null)
+                                            {
+                                                <tr>
+                                                    <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">Baggage Protection Fee</td>
+                                                    <td style="font:bold 14px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">$@String.Format("{0:0.00}", Model.BaggageInsurances.TotalPrice, 2)</td>
+
+                                                </tr>
+                                                totalFare = totalFare + Model.BaggageInsurances.TotalPrice;
+                                            }
+                                            if (extendedCancelFee > 0)
+                                            {
+                                                <tr>
+                                                    <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">Extended Cancellation Fee</td>
+                                                    <td style="font:bold 14px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">$@String.Format("{0:0.00}", extendedCancelFee, 2)</td>
+
+                                                </tr>
+                                                totalFare = totalFare + extendedCancelFee;
+                                            }
+                                            <tr>
+                                                <td style="font:normal 12px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">Total</td>
+                                                <td style="font:bold 14px Arial, Helvetica, sans-serif; padding:6px; border: 1px solid #ccc; border-collapse: collapse;">$@String.Format("{0:0.00}", totalFare, 2)</td>
+                                            </tr>
+                                        }
+
+                                        @if (extendedCancelFee > 0)
+                                        {
+                                            <tr>
+                                                <td colspan="3">
+                                                    <table style="width:100%; padding:5px; border:1px solid #ccc; border-collapse:collapse">
+
+                                                        <tr>
+                                                            <td colspan="3" style="text-align:center; background:#143c67; padding:0 10px"><span style="text-align:center; font-weight:bold; color:#fff; font-size:16px">Extended Cancellation Policy</span> <p style="width:100%; font-size:11px; margin:0; color:#fff; padding:0">Allow yourself to cancel your flight within 24 hours from the time of booking for any reason!</p></td>
+                                                        </tr>
+                                                        <tr style="line-height:0;">
+                                                            <td><img data-imagetype="External" src="@string.Format("{0}/images/chek_g.png", Utility.PortalSettings.DomainUrl)" style="text-align:left; width:25px; padding:0px; margin:0" /></td>
+
+
+                                                            <td style="font-size:12px; color:#333">Cancel or Re-book You Booking For Any Reason Within 24 Hours</td>
+                                                            <td>&nbsp;</td>
+                                                        </tr>
+                                                        <tr style="line-height:0;">
+                                                            <td><img data-imagetype="External" src="@string.Format("{0}/images/chek_g.png", Utility.PortalSettings.DomainUrl)" style="text-align:left; width:25px; padding:0px; margin:0" /></td>
+                                                            <td style="font-size:12px; color:#333">Only Applicable for US Departures</td>
+                                                            <td style="font-size:20px; color:#000">$@String.Format("{0:0.00}", extendedCancelFee / Model.Travellers.Count, 2)<span style="font-size:10px; color:#333">Per Person</span></td>
+                                                        </tr>
+                                                        <tr style="line-height:0;">
+                                                            <td><img data-imagetype="External" src="@string.Format("{0}/images/chek_g.png", Utility.PortalSettings.DomainUrl)" style="text-align:left; width:25px; padding:0px; margin:0" /></td>
+                                                            <td style="font-size:12px; color:#333;">If you wish to cancel, kindly email us at @Utility.PortalSettings.PortalDetails.CustomerSupportMail </td>
+
+                                                            <td>&nbsp;</td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td colspan="3" style="padding:0 8px;">* Extended Cancellation Policy Is Non- Refundable Once Purchased.</td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        }
+                                        @if (Model.BaggageInsurances != null && Model.BaggageInsurances.TotalPrice > 0)
+                                        {
+                                            <tr>
+                                                <td colspan="3">
+                                                    <table style="width:100%; padding:5px; border: 1px solid #ccc; border-collapse: collapse;">
+                                                        <tr>
+                                                            <td colspan="3" style="text-align:center; background:#143c67;  padding:0 10px;">
+                                                                <span style="text-align:center; font-weight:bold; color:#fff;  font-size:16px">Lost Baggage Protection</span>
+                                                                <p style="width:100%; font-size:11px; color:#fff; margin:0; padding:0;">Give yourself the peace of mind that your checked baggage will be protected on your trip for <b>$5.00</b>(per person)</p>
+                                                            </td>
+                                                        </tr>
+                                                        <tr style="line-height:0;">
+                                                            <td><img data-imagetype="External" src="@string.Format("{0}/images/chek_g.png", Utility.PortalSettings.DomainUrl)" style="text-align:left; width:25px; padding:0px; margin:0" /></td>
+
+
+                                                            <td style="font-size:12px; color:#333">Cancel or Re-book You Booking For Any Reason Within 24 Hours</td>
+                                                            <td>&nbsp;</td>
+                                                        </tr>
+                                                        <tr style="line-height:0;">
+                                                            <td><img data-imagetype="External" src="@string.Format("{0}/images/chek_g.png", Utility.PortalSettings.DomainUrl)" style="text-align:left; width:25px; padding:0px; margin:0" /></td>
+                                                            <td style="font-size:12px; color:#333">Only Applicable for US Departures</td>
+                                                            <td style="font-size:20px; color:#000">$5.0<span style="font-size:10px; color:#333">Per Person</span></td>
+                                                        </tr>
+                                                        <tr style="line-height:0;">
+                                                            <td><img data-imagetype="External" src="@string.Format("{0}/images/chek_g.png", Utility.PortalSettings.DomainUrl)" style="text-align:left; width:25px; padding:0px; margin:0" /></td>
+                                                            <td style="font-size:12px; color:#333;">If you wish to cancel, kindly email us at @Utility.PortalSettings.PortalDetails.CustomerSupportMail </td>
+
+                                                            <td><img src="@string.Format("{0}/images/Blue-Ribbonb.png", Utility.PortalSettings.DomainUrl)" /></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        }
+                                        <tr>
+                                            <td style="padding-top:10px;" colspan="2">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <table style="width:100%; padding:5px; border: 1px solid #ccc; border-collapse: collapse;">
+                                                    <tr bgcolor="#143c67">
+                                                        <td style=" color: #fff; padding:10px; font:bold 16px Arial, Helvetica, sans-serif;">Charge authorization, your electronic Signature copy</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="color:#333; font-weight:bold; font-size:14px; padding:6px;">Change Rules</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="color:#333; font:normal 12px Arial, Helvetica, sans-serif; padding:6px; line-height:20px;"><img src="@string.Format("{0}/images/check_box.png",Utility.PortalSettings.DomainUrl)" style="margin-right:6px;" />I, @Utility.GetTitleCase(string.Format("{0} {1}", Model.Travellers[0].FirstName, Model.Travellers[0].LastName).ToLower()) agree to pay a total amount of @String.Format("{0:0.00}", totalFare, 2) USD (Credit/Debit Card Number: XXXX XXXX XXXX @string.Format("{0}", Utility.GetCreditCardLastDigits(Model.BillingDetails.CardNumber))) for the above mentioned itinerary. I have verified the dates and times of the flights and name(s) of Passanger(s) are correct. I have read the Terms and Conditions and I understand that:</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="color:#333; font:normal 12px Arial, Helvetica, sans-serif; padding:6px; line-height:20px;">&bull; Most fares and taxes are non-refundable and service fee is non-refundable, the tickets are non-transferable and name changes on the tickets are not permitted.</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="color:#333; font:normal 12px Arial, Helvetica, sans-serif; padding:6px; line-height:20px;">&bull; All government taxes and service fees are included in the total price.</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="color:#333; font:normal 12px Arial, Helvetica, sans-serif; padding:6px; line-height:20px;">&bull; Date and routing changes will be subject to the airlines penalties, fare difference and our service fees.</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="color:#333; font:normal 12px Arial, Helvetica, sans-serif; padding:6px;">&bull; I understand this is to serve as my legal signature.</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="color:#333; font:normal 12px Arial, Helvetica, sans-serif; padding:6px; line-height:15px;"> &bull; I understand that the fares are subject to availability of seats and are not guranteed until paid in full.</td>
+                                                    </tr>
+
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="padding:10px; text-align:center; font-size:16px; font-weight: bold;">For any further assistance, please contact us at <a href="tel:1-855-949-3247" style="color:#047AF5">1-855-949-3247</a> or you can also reach us at<a href="@Utility.PortalSettings.PortalDetails.CustomerSupportMail" style="color:#047AF5"> @Utility.PortalSettings.PortalDetails.CustomerSupportMail</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="text-align: center; padding-top:10px;"><img style="margin:0; padding:5px; border:1px solid#143c67; " src="@string.Format("{0}/images/card_icon.jpg",Utility.PortalSettings.DomainUrl)" /></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>
+
+}

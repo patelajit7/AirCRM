@@ -1,0 +1,81 @@
+﻿@model  Infrastructure.HelpingModel.BookingEntities.BookingDetails
+@using Infrastructure.HelpingModel.BookingEntities;
+@using Infrastructure;
+@{
+    Layout = "~/Views/Shared/Layout.cshtml";
+}
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+
+            </div>
+        </div>
+    </section>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-10">
+                        <blockquote>
+                            <small>BookingId</small>
+                            <h3>@Model.Transaction.Id</h3>
+                        </blockquote>
+                        <blockquote>
+                            <small>Agency PNR</small>
+                            <h3>@Model.Transaction.PNR</h3>
+                        </blockquote>
+                        @if (!string.IsNullOrEmpty(Model.Transaction.AirlinePNR))
+                        {
+                            <blockquote>
+                                <small>Airline PNR</small>
+                                <h3>@Model.Transaction.AirlinePNR</h3>
+                            </blockquote>
+                        }
+                        <blockquote>
+                            <small>Booking Status</small>
+                            <h3>@string.Format("{0}", Model.Transaction.BookingStatus == -1 ? "--" : Common.Utility.GetEnumDescription((BookingStatus)(Model.Transaction.BookingStatus == 0 ? 1 : Model.Transaction.BookingStatus)))</h3>
+                        </blockquote>
+                        <div class="col-md-3">
+                            <div style="background-color: #fff;">
+                                <button type="button" class="btn btn-outline-success btn-block btn-sm" onclick="objBookings.SendEmailToCustomer('@Model.Transaction.Id');"><i class="fas fa-envelope-open-text"></i>  Send mail to customer</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div style="background-color: #fff;margin: 1.5em 1rem; padding: 1.5em .7rem;">
+                            <button type="button" onclick="window.location.href='@string.Format("{0}/bookings-Search",Common.Utility.Settings.DomainUrl)';" class="btn btn-outline-danger btn-block btn-sm"><i class="fa fa-arrow-left"></i> Back</button>
+                        </div>
+                        <div style="background-color: #fff;margin: 1.5em 1rem; padding: 1.5em .7rem;">
+                            <button type="button" class="btn btn-outline-warning btn-block btn-sm" onclick="objBookings.getBookingStatusUpdateView('@Model.Transaction.Id','@Model.Transaction.ReferenceNumber');"><i class="fa fa-marker"></i> Update Status</button>
+                        </div>
+                        <div style="background-color: #fff;margin: 1.5em 1rem; padding: 1.5em .7rem;">
+                            <button type="button" class="btn btn-outline-success btn-block btn-sm" onclick="objBookings.getAddRemarksView('@Model.Transaction.Id');"><i class="fas fa-binoculars"></i> Add Remark</button>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    @{Html.RenderPartial("~/views/booking/partial/_bookingdetailsview.cshtml", Model);}
+    @{Html.RenderPartial("~/views/booking/partial/_billingdetailsview.cshtml", Model);}
+    @{Html.RenderPartial("~/views/booking/partial/_flightdetailsview.cshtml", Model);}
+    @{Html.RenderPartial("~/views/booking/partial/_pricedetailsview.cshtml", Model);}
+    @{Html.RenderPartial("~/views/booking/partial/_itinerarydetailsview.cshtml", Model);}
+    @{Html.RenderPartial("~/views/booking/partial/_travellerdetailsview.cshtml", Model);}
+    <div id="divBookingRemarks"></div>
+</div>
+<div class="modal fade" id="modalPopup" aria-modal="true" role="dialog">
+</div>
+@section Scripts {
+    @Scripts.Render("~/scripts/validate")
+    @Scripts.Render("~/scripts/booking")
+    <script>
+        TransId = '@Model.Transaction.Id';
+        $(document).ready(function () {
+            objBookings.getBookingRemarks('@Model.Transaction.Id');
+        });
+    </script>
+}

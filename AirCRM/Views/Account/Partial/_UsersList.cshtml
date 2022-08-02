@@ -1,0 +1,52 @@
+﻿@model List<Infrastructure.HelpingModels.UserData>
+@using Infrastructure.HelpingModels;
+@{
+    int skpCnt = 0;
+    bool res = Request.Cookies["SkipCount"] != null && !string.IsNullOrEmpty(Request.Cookies["SkipCount"].Value) ? int.TryParse(Request.Cookies["SkipCount"].Value.Split('=')[1], out skpCnt) : false;
+}
+
+@if (Model != null && Model.Count > 0)
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>User Id</th>
+                <th>User Name</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (UserData item in Model)
+            {
+                <tr>
+                    <td>@item.UserId</td>
+                    <td>@item.UserName</td>
+                    <td>@item.FirstName</td>
+                    <td>@item.LastName</td>
+                    <td>
+                        <div class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                <span class="flaticon-more-button-of-three-dots"></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="@string.Format("account/UsersUpdate/{0}",item.Id)"><i class="fas fa-cogs text-dark-pastel-green"></i> Edit</a>
+                                <a class="dropdown-item" onclick="userObj.deleteUserPop('@item.Id')" href="javascript:void(0);"><i class="fas fa-times text-orange-red"></i> Delete</a>
+
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="text-center text-danger">Record Not Found!</div>
+}
+
+
+
+

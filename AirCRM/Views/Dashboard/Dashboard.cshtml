@@ -1,0 +1,213 @@
+﻿@model Infrastructure.HelpingModels.DashboardData
+@using Common;
+@using Infrastructure;
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/Layout.cshtml";
+}
+
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+
+            </div>
+        </div>
+    </div>
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-danger">
+                        <div class="inner">
+                            <h3>@Model.NewBooking</h3>
+                            <p>New Bookings</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-plane"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3>@Model.Inprogress</h3>
+                            <p>Inprogress</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-stats-bars"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3>@Model.Completed</h3>
+                            <p>Completed</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-bag"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>@Model.TotalBooking</h3>
+                            <p>Total Bookings</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-pie-graph"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card card-default">
+                        <div class="card-header">
+                            <h3 class="card-title">Searches in month</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart">
+                                <canvas id="monthSearchChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card card-default">
+                        <div class="card-header">
+                            <h3 class="card-title">Top Searches</h3>
+
+                        </div>
+                        <div class="card-body">
+                            <canvas id="topSearchesChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card card-default">
+                        <div class="card-header">
+                            <h3 class="card-title">Sales in @DateTime.UtcNow.ToString("MMMM") month</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart">
+                                <canvas id="monthSaleChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card card-default">
+                        <div class="card-header">
+                            <h3 class="card-title">Today's affiliate wise searches</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart">
+                                <canvas id="affiliateSearchChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<aside class="control-sidebar control-sidebar-dark"></aside>
+
+@section Scripts {
+    @Scripts.Render("~/scripts/chartjs")
+    <script>
+        $(function () {
+
+            //----------------- PieChar Starts Here ------------------------
+            var topSearchesData = @Html.Raw(Json.Encode(Utility.GetPieChartData(Model)));
+            var topSearchesCanvas = $('#topSearchesChart').get(0).getContext('2d')
+            var topSearchesOptions = {
+                maintainAspectRatio: false,
+                responsive: true,
+                legend: {
+                    display: true,
+                    position: 'right'
+                }
+            }
+            new Chart(topSearchesCanvas, {
+                type: 'pie',
+                data: topSearchesData,
+                options: topSearchesOptions
+            })
+            //----------------- PieChar Ends Here ------------------------
+
+
+            //----------------- BarChar Starts Here ------------------------
+            var monthSearchChartCanvas = $('#monthSearchChart').get(0).getContext('2d')
+            var monthSearchData = @Html.Raw(Json.Encode(Utility.GetBarChartData(Model)));
+            var monthSearchChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                datasetFill: false
+            }
+            new Chart(monthSearchChartCanvas, {
+                type: 'bar',
+                data: monthSearchData,
+                options: monthSearchChartOptions
+            })
+            //----------------- BarChar Ends Here ------------------------
+
+
+            //----------------- LineChar Starts Here ------------------------
+            var monthSaleChartCanvas = $('#monthSaleChart').get(0).getContext('2d')
+            var monthSaleData = @Html.Raw(Json.Encode(Utility.GetLineChartData(Model)));
+            var monthSaleChartOptions = {
+                maintainAspectRatio: false,
+                responsive: true,
+                legend: {
+                    display: false
+                },
+                scales: {
+                    xAxes: [{
+                        gridLines: {
+                            display: false,
+                        }
+                    }],
+                    yAxes: [{
+                        gridLines: {
+                            display: false,
+                        }
+                    }]
+                }
+            }
+            monthSaleData.datasets[0].fill = false;
+            monthSaleChartOptions.datasetFill = false
+            new Chart(monthSaleChartCanvas, {
+                type: 'line',
+                data: monthSaleData,
+                options: monthSaleChartOptions
+            })
+            //----------------- LineChar Ends Here ------------------------
+
+            //----------------- BarChar Starts Here ------------------------
+            var affiliateSearchChartCanvas = $('#affiliateSearchChart').get(0).getContext('2d')
+            var affiliateSearchData = @Html.Raw(Json.Encode(Utility.GetAffiliateSearchData(Model)));
+            var affiliateSearchChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                datasetFill: false
+            }
+            new Chart(affiliateSearchChartCanvas, {
+                type: 'bar',
+                data: affiliateSearchData,
+                options: affiliateSearchChartOptions
+            })
+            //----------------- BarChar Ends Here ------------------------
+
+        })</script>
+
+}

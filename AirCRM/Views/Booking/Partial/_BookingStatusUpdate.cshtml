@@ -1,0 +1,43 @@
+﻿@model Infrastructure.HelpingModels.ViewModel.UpdateBookingStatusDetails
+@using Common;
+@using TravelCRM.Controllers;
+@using Infrastructure;
+
+<div class="modal-dialog">
+    <div class="modal-content">        
+            <form id="frmBookingStatusUpdate">
+                <div class="modal-header">
+
+                    <h4 class="modal-title">Booking Status Update</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12 msg" id="divBookingStatusMsg" style="display:none;">
+                        <div id="divBookingStatusErrorMsg" class="alert alert-danger" style="display: none;"></div>
+                        <div id="divBookingStatusSuccessMsg" class="alert alert-success" style="display: none;"></div>
+                    </div>
+                    @Html.HiddenFor(m => m.BookingId)
+                    @Html.HiddenFor(m => m.ReferenceId)
+
+                    <div class="form-group">
+                        <label>Status</label>
+                        @Html.DropDownListFor(model => model.BookingStatus, StaticData.GetBookingStatus(), new { @class = "form-control", @title = "Booking Status" })
+                        @Html.ValidationMessageFor(m => m.BookingStatus, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Remarks</label>
+                        @Html.TextAreaFor(model => model.Remarks, new { @class = "form-control", @maxlength = "500", @title = "Remarks", @placeholder = "Enter Remarks" })
+                        @Html.ValidationMessageFor(m => m.Remarks, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> Close</button>
+                    <button type="button" class="btn btn-outline-primary" id="btnUpdate" onclick="objBookings.updateBookingStatus();"><i class="fa fa-save" aria-hidden="true"></i> Update</button>
+                </div>
+            </form>
+
+    </div>
+</div>
+

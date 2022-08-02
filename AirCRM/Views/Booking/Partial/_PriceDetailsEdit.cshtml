@@ -1,0 +1,92 @@
+﻿@model Infrastructure.HelpingModels.ViewModel.FlightPriceDetailsViewModel
+@using Common;
+@using TravelCRM.Controllers;
+@using Infrastructure;
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        @if (Model != null)
+        {
+            <form id="frmPriceDetailEdit">
+                <div class="modal-header">
+
+                    <h4 class="modal-title">Edit Price Details</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12 msg" id="divPriceDetailEditMsg" style="display:none;">
+                        <div id="divPriceDetailEditErrorMsg" class="alert alert-danger" style="display: none;"></div>
+                        <div id="divPriceDetailEditSuccessMsg" class="alert alert-success" style="display: none;"></div>
+                    </div>
+                    @Html.HiddenFor(m => m.Id)
+                    @Html.HiddenFor(m => m.Currency)
+                    @Html.HiddenFor(m => m.Discount)
+                    <div class="form-group">
+                        <label>Pax Type</label>
+                        @Html.DropDownListFor(model => model.PaxType, StaticData.GetPaxType(), new { @class = "form-control", @title = "Pax Type" })
+                        @Html.ValidationMessageFor(m => m.PaxType, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Pax Count</label>
+                        @Html.TextBoxFor(model => model.PaxCount, new { @class = "form-control", @title = "Pax Count" })
+                        @Html.ValidationMessageFor(m => m.PaxCount, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>FareBase Code</label>
+                        @Html.TextBoxFor(model => model.FareBaseCode, new { @class = "form-control", @maxlength = "50" })
+                        @Html.ValidationMessageFor(m => m.FareBaseCode, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Base Fare</label>
+                        @Html.TextBoxFor(model => model.BaseFare, new { @class = "form-control", @title = "Base Fare" })
+                        @Html.ValidationMessageFor(m => m.BaseFare, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Tax</label>
+                        @Html.TextBoxFor(model => model.Tax, new { @class = "form-control", @title = "Tax" })
+                        @Html.ValidationMessageFor(m => m.Tax, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Markup</label>
+                        @Html.TextBoxFor(model => model.Markup, new { @class = "form-control", @title = "Markup" })
+                        @Html.ValidationMessageFor(m => m.Markup, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Booking Fee</label>
+                        @Html.TextBoxFor(model => model.BookingFee, new { @class = "form-control", @title = "Markup" })
+                        @Html.ValidationMessageFor(m => m.BookingFee, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Extended Cancellation</label>
+                        @Html.CheckBoxFor(model => model.IsExtendedCancellation, new { @class = "" })
+                        @Html.TextBoxFor(model => model.ExtendedCancellationAmount, new { @class = "form-control", @title = "Extended Cancellation Amount" })
+                        @Html.ValidationMessageFor(m => m.ExtendedCancellationAmount, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Total Amount</label>
+                        @Html.TextBoxFor(model => model.GetTotal, new { @class = "form-control", @id = "TotalAmount", @title = "Total Amount" })
+                    </div>
+
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> Close</button>
+                    <button type="button" class="btn btn-outline-primary" id="btnUpdate" onclick="objBookings.updatePriceDetail('@Model.Id');"><i class="fa fa-save" aria-hidden="true"></i> Update</button>
+                </div>
+            </form>
+
+        }
+        else
+        {
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    Booking information not found.
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+

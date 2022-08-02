@@ -1,0 +1,131 @@
+﻿@model Infrastructure.HelpingModels.ViewModel.BillingDetailsViewModel
+@using Common;
+@using TravelCRM.Controllers;
+@using Infrastructure;
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        @if (Model != null)
+        {
+            <form id="frmBillingDetailsEdit">
+                <div class="modal-header">
+
+                    <h4 class="modal-title">Edit Billing Details</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12 msg" id="divBillingDetailsEditMsg" style="display:none;">
+                        <div id="divBillingDetailsErrorMsg" class="alert alert-danger" style="display: none;"></div>
+                        <div id="divBillingDetailsSuccessMsg" class="alert alert-success" style="display: none;"></div>
+                    </div>
+                    @Html.HiddenFor(m => m.Id)
+                    @Html.HiddenFor(m => m.BookingId)
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Email</label>
+                                @Html.TextBoxFor(model => model.Email, new { placeholder = "Email Id", @class = "form-control", @maxlength = "100", @title = "Email Id" })
+                                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label>Billing Phone</label>
+                                @Html.TextBoxFor(m => m.BillingPhone, "", new { placeholder = "Billing Phone", @class = "form-control", @maxlength = "10", @title = "Billing Phone", @onkeypress = "return shared.isDigitsOnly(event);" })
+                                @Html.ValidationMessageFor(m => m.BillingPhone, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label>Country</label>
+                                @Html.DropDownListFor(m => m.CountryCode, StaticData.GetCountries(), new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.CountryCode, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label>Address 1</label>
+                                @Html.TextBoxFor(model => model.AddressLine1, new { @class = "form-control", @maxlength = "100", @title = "Address Line 1", placeholder = "Address Line 1" })
+                                @Html.ValidationMessageFor(m => m.AddressLine1, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label>Address 2</label>
+                                @Html.TextBoxFor(model => model.AddressLine2, new { @class = "form-control", @maxlength = "100", placeholder = "Address Line 2" })
+                                @Html.ValidationMessageFor(m => m.AddressLine2, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label>Address 3</label>
+                                @Html.TextBoxFor(model => model.AddressLine3, new { @class = "form-control", @maxlength = "100", placeholder = "Address Line 3" })
+                                @Html.ValidationMessageFor(m => m.AddressLine3, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label>City</label>
+                                @Html.TextBoxFor(model => model.City, new { placeholder = "City Name", @class = "form-control", @title = "City", @maxlength = "70" })
+                                @Html.ValidationMessageFor(m => m.City, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label>State</label>
+                                @Html.TextBoxFor(model => Model.State, new { @class = "form-control txtstate", @title = "State", @maxlength = "100" })
+                                @Html.ValidationMessageFor(m => m.State, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label>ZipCode</label>
+                                @Html.TextBoxFor(model => model.ZipCode, new { placeholder = "Zip", @class = "form-control", @maxlength = "6", @title = "Zip code" })
+                                @Html.ValidationMessageFor(m => m.ZipCode, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>C HolderName</label>
+                                @Html.TextBoxFor(model => model.CCHolderName, new { @class = "form-control", @maxlength = "100", @title = "C HolderName", @placeholder = "Enter Card Holder Name" })
+                                @Html.ValidationMessageFor(m => m.CCHolderName, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label>Card Type</label>
+                                @Html.DropDownListFor(model => model.CardType, StaticData.GetPaymentMethod(), new { @class = "form-control", @title = "Card type" })
+                                @Html.ValidationMessageFor(m => m.CardType, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label>Card Number</label>
+                                @Html.TextBoxFor(model => model.CardNumber, new { @class = "form-control", @maxlength = "20", @title = "Card Number", @placeholder = "Enter Card Number" })
+                                @Html.ValidationMessageFor(m => m.CardNumber, "", new { @class = "text-danger" })
+                            </div>                            
+                            <div class="form-group">
+                                <label>Expiry Month</label>
+                                @Html.DropDownListFor(model => model.ExpiryMonth, StaticData.GetMonths(), new { @class = "form-control", @title = "Expiry Month" })
+                                @Html.ValidationMessageFor(m => m.ExpiryMonth, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label>Expiry Year</label>
+                                @Html.DropDownListFor(model => model.ExpiryYear, StaticData.GetYears(), new { @class = "form-control", @title = "Expiry Year" })
+                                @Html.ValidationMessageFor(m => m.ExpiryYear, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label>CVV Number</label>
+                                @Html.TextBoxFor(model => model.CVVNumber, new { @class = "form-control", @maxlength = "5", @title = "CVV Number", @placeholder = "Enter CVV Number" })
+                                @Html.ValidationMessageFor(m => m.CVVNumber, "", new { @class = "text-danger" })
+                            </div>
+
+                        </div>
+                    </div>
+                    
+
+                                        
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> Close</button>
+                    <button type="button" class="btn btn-outline-primary" id="btnUpdate" onclick="objBookings.updateBillingDetail();"><i class="fa fa-save" aria-hidden="true"></i> Update</button>
+                </div>
+            </form>
+
+        }
+        else
+        {
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    Booking information not found.
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+
+

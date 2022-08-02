@@ -1,0 +1,49 @@
+﻿@model  IEnumerable<Infrastructure.HelpingModel.FlightBooking>
+@using Infrastructure;
+@using TravelCRM.Authentication;
+@using TravelCRM.Controllers;
+@if (Model != null)
+{
+    <div class="card-body">
+        <table id="example1" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Booking Id</th>
+                    <th>Agency PNR</th>
+                    <th>Airline PNR</th>
+                    <th>Card Holder Name</th>
+                    <th>Booking Status</th>
+                    <th>Departure</th>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th>Airline</th>
+                    <th>TripType</th>
+                    <th>Portal</th>
+                    <th>Booked On</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <a onclick="openBooking('@item.Id')" href="javascript:void(0)">@item.Id</a>
+                        </td>
+                        <td>@item.PNR</td>
+                        <td>@string.Format("{0}", !string.IsNullOrEmpty(item.AirlinePNR) ? item.AirlinePNR : "--")</td>
+                        <td>@string.Format("{0}", !string.IsNullOrEmpty(item.CCHolderName) ? item.CCHolderName : "--")</td>
+                        <td class="@string.Format("{0}",((BookingStatus)item.BookingStatus)==BookingStatus.Cancelled?"text-danger":((BookingStatus)item.BookingStatus)==BookingStatus.Completed?"text-success":"text-warning")">@string.Format("{0}", item.BookingStatus == -1 ? "--" : Common.Utility.GetEnumDescription((BookingStatus)(item.BookingStatus == 0 ? 1 : item.BookingStatus)))</td>
+                        <td>@string.Format("{0}", item.DeptDate != null ? Convert.ToDateTime(item.DeptDate).ToString("dd MMM yyyy") : "-")</td>
+                        <td>@item.OriginCode</td>
+                        <td>@item.DestinationCode</td>
+                        <td>@item.Airline</td>
+                        <td>@Common.Utility.GetEnumDescription((TripType)item.TripType)</td>
+                        <td>@Common.Utility.GetEnumDescription((PortalType)item.PortalId)</td>
+                        <td>@item.Created.ToString("MMM dd, yyy HH:mm:ss tt")</td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+    </div>
+}

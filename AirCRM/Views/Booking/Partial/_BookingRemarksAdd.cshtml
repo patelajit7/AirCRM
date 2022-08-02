@@ -1,0 +1,36 @@
+﻿@model Infrastructure.HelpingModels.ViewModel.BookingRemarks
+@using Common;
+@using TravelCRM.Controllers;
+@using Infrastructure;
+
+<div class="modal-dialog">
+    <div class="modal-content">        
+            <form id="frmBookingRemarksAdd">
+                <div class="modal-header">
+
+                    <h4 class="modal-title">Add Remarks</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12 msg" id="divBookingRemarksMsg" style="display:none;">
+                        <div id="divBookingRemarksErrorMsg" class="alert alert-danger" style="display: none;"></div>
+                        <div id="divBookingRemarksSuccessMsg" class="alert alert-success" style="display: none;"></div>
+                    </div>
+                    @Html.HiddenFor(m => m.BookingId)                    
+                    <div class="form-group">
+                        <label>Remarks</label>
+                        @Html.TextAreaFor(model => model.Remarks, new { @class = "form-control", @maxlength = "500", @title = "Remarks", @placeholder = "Enter Remarks" })
+                        @Html.ValidationMessageFor(m => m.Remarks, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> Close</button>
+                    <button type="button" class="btn btn-outline-primary" id="btnUpdate" onclick="objBookings.AddRemarks();"><i class="fa fa-plus" aria-hidden="true"></i> Add</button>
+                </div>
+            </form>
+
+    </div>
+</div>
+

@@ -1,0 +1,94 @@
+﻿@model Infrastructure.HelpingModels.Masters.User
+@using Presentation.Controllers;
+@using Infrastructure.HelpingModels;
+@{
+    /**/
+
+    ViewBag.Title = "User Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Response respnse = null;
+    if (ViewBag.Result != null)
+    {
+        respnse = ViewBag.Result as Response;
+    }
+}
+<div class="dashboard-content-one">
+    <div class="breadcrumbs-area">
+        <h3>User Add Form</h3>
+    </div>
+    <div class="card height-auto">
+        <div class="card-body">
+            @if (respnse != null && respnse.IsSuccess)
+            {
+                <div class="alert alert-success alert-dismissible">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>Success!</strong> @respnse.Message
+                </div>
+            }
+            @if (respnse != null && !respnse.IsSuccess)
+            {
+                <div class="alert alert-danger alert-dismissible">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>Failed!</strong> @respnse.Message
+                </div>
+            }
+            @using (Html.BeginForm("UsersAdd", "Users", FormMethod.Post, new { id = "frmUserAdd", @class = "new-added-form" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="row">
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Name *</label>
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>User Name *</label>
+                        @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })                        
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Password *</label>
+                        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Permissions *</label>
+                        <table>
+                            @for (int i = 0; i < Model.UserPermissions.Count(); i++)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.CheckBoxFor(model => model.UserPermissions[i].IsSelected)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model => model.UserPermissions[i].Name)
+                                        @Html.HiddenFor(model => model.UserPermissions[i].Name)
+                                        @Html.HiddenFor(model => model.UserPermissions[i].Id)
+                                        @Html.HiddenFor(model => model.UserPermissions[i].UserId)
+                                        @Html.HiddenFor(model => model.UserPermissions[i].PermissionId)
+                                        @Html.HiddenFor(model => model.UserPermissions[i].CompanyId)
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 form-group mg-t-8">
+                        <input type="submit" value="Save" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark" />
+                        <a class="btn-fill-md radius-4 text-light bg-orange-red" href="@string.Format("{0}/users",Common.Utility.Settings.DomainUrl)">Close</a>
+                    </div>
+                </div>
+            }
+
+
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.js"></script>

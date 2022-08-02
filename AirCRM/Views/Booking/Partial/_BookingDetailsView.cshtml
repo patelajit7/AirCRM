@@ -1,0 +1,64 @@
+﻿
+@model Infrastructure.HelpingModel.BookingEntities.BookingDetails
+@using Common;
+@using Infrastructure;
+
+@if (Model != null)
+{
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-default  collapsed-card">
+                <div class="card-header">
+                    <h3 class="card-title">Booking Details</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-plus"></i>
+                        </button>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="col-md-12">
+                        <div class="card-body table-responsive p-0">
+                            <table class="table table-hover text-nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>Agency PNR</th>
+                                        <th>Airline PNR</th>
+                                        <th>Reference No</th>
+                                        <th>Booking Status</th>
+                                        <th>Client IP</th>
+                                        <th>Booked On</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>@Model.Transaction.PNR</td>
+                                        <td>@string.Format("{0}", !string.IsNullOrEmpty(Model.Transaction.AirlinePNR) ? Model.Transaction.AirlinePNR : "--")</td>
+                                        <td>@Html.Raw(string.Format("{0}", (!string.IsNullOrEmpty(Model.Transaction.ReferenceNumber) ? Model.Transaction.ReferenceNumber : "-----")))</td>
+                                        <td>@string.Format("{0}", Model.Transaction.BookingStatus == -1 ? "--" : Common.Utility.GetEnumDescription((BookingStatus)(Model.Transaction.BookingStatus == 0 ? 1 : Model.Transaction.BookingStatus)))</td>
+                                        <td>@Html.Raw(string.Format("{0}", !string.IsNullOrEmpty(Model.Transaction.ClientIP) ? Model.Transaction.ClientIP : "--"))</td>
+                                        <td>@Html.Raw(string.Format("{0:MM-dd-yyyy HH:mm:ss}", Model.Transaction.BookedOn))</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                @if (TravelCRM.Controllers.StaticData.DisplayLinkAsPerRole(new List<string>() { RoleType.Admin.ToString() }))
+                {
+                    <div class="card-footer">
+                        <button type="button" id="btnEditBooking" class="btn btn-outline-warning float-right" onclick="objBookings.editBookingDetail();"><i class="fa fa-edit"></i> Edit</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+else
+{
+    <div class="alert alert-danger">
+        Booking details not found.
+    </div>
+}
+<div class="clearfix"></div>

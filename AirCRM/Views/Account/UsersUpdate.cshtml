@@ -1,0 +1,111 @@
+﻿@model TravelCRM.Models.UpdateUserViewModel
+@using Infrastructure.HelpingModels;
+@{
+    ViewBag.Title = "AirCRM | Update User";
+    JsonResponse respnse = null;
+    if (ViewBag.Result != null)
+    {
+        respnse = ViewBag.Result as JsonResponse;
+    }
+}
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Update User</h1>
+                </div>
+
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- jquery validation -->
+                    <div class="card card-primary">
+
+                        @using (Html.BeginForm("UsersUpdate", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="card-body">
+                                @if (respnse != null && respnse.IsSuccess)
+                                {
+                                    <div class="alert alert-success alert-dismissible">
+                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                        <strong>Success!</strong> @respnse.Message
+                                    </div>
+                                }
+                                @if (respnse != null && !respnse.IsSuccess)
+                                {
+                                    <div class="alert alert-danger alert-dismissible">
+                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                        <strong>Failed!</strong> @respnse.Message
+                                    </div>
+                                }
+                                @Html.HiddenFor(m => m.Id)
+                                @Html.HiddenFor(m => m.UserId)
+                                @Html.HiddenFor(m => m.Email)
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.FirstName, new { @class = "col-md-2 control-label" })
+                                    <div class="col-md-10">
+                                        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.LastName, new { @class = "col-md-2 control-label" })
+                                    <div class="col-md-10">
+                                        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+                                    <div class="col-md-10">
+                                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", disabled = "disabled" })
+                                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Role, new { @class = "col-md-2 control-label" })
+                                    <div class="col-md-10">
+                                        <input name="Role" type="radio" value="Admin" @string.Format("{0}", Model.Role.Equals("Admin") ? "checked" : "") /> Admin<br />
+                                        <input name="Role" type="radio" value="Supervisor" @string.Format("{0}", Model.Role.Equals("Supervisor") ? "checked" : "")/> Supervisor<br />
+                                        <input name="Role" type="radio" value="Agent" @string.Format("{0}", Model.Role.Equals("Agent") ? "checked" : "")/> Agent<br />
+                                        
+                                    </div>
+                                </div>
+                                <div>
+                                    <button type="submit" class="btn btn-outline-primary"><i class="fas fa-save"></i> Save</button>
+                                    <button type="button" onclick='window.location.href = "@string.Format("{0}/users",Common.Utility.Settings.DomainUrl)"' class="btn btn-outline-danger float-right"><i class="fas fa-times"></i> Cancel</button>
+                                </div>
+
+                            </div>
+                        }
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!--/.col (left) -->
+                <!-- right column -->
+                <div class="col-md-6">
+
+                </div>
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+@section Scripts {
+    @Scripts.Render("~/scripts/theme")
+    <script src="~/Content/js/jquery.validate.min.js"></script>
+    <script src="~/Content/js/jquery.validate.unobtrusive.min.js"></script>
+}

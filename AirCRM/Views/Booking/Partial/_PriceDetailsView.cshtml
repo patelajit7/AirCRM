@@ -1,0 +1,73 @@
+﻿
+@model Infrastructure.HelpingModel.BookingEntities.BookingDetails
+@using Common;
+@using Infrastructure;
+
+@if (Model != null)
+{
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-default collapsed-card">
+                <div class="card-header">
+                    <h3 class="card-title">Price Details</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-plus"></i>
+                        </button>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="col-md-12">
+                        <div class="card-body table-responsive p-0">
+                            <table class="table table-hover text-nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>Pax Type</th>
+                                        <th class="text-center">Pax Count</th>
+                                        <th class="text-right">Base Fare<br>(Per pax)</th>
+                                        <th class="text-right">Tax<br>(Per pax)</th>
+                                        <th class="text-right">Markup<br>(Per pax)</th>
+                                        <th class="text-right">Booking Fee<br>(Per pax)</th>
+                                        <th class="text-right">Cancellation Fee<br>(Per pax)</th>
+                                        <th class="text-right">Total</th>
+                                        <th class="text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.PriceDetail)
+                                    {
+                                        <tr>
+                                            <td>@string.Format("{0}", Utility.GetEnumDescription((TravellerPaxType)item.PaxType))</td>
+                                            <td class="text-center">@string.Format("{0}", item.PaxCount)</td>
+                                            <td class="text-right">@string.Format("${0}", item.BaseFare)</td>
+                                            <td class="text-right">@string.Format("${0}", item.Tax)</td>
+                                            <td class="text-right">@string.Format("${0}", item.Markup)</td>
+                                            <td class="text-right">@string.Format("${0}", item.BookingFee)</td>
+                                            <td class="text-right">@string.Format("${0}", item.ExtendedCancellationAmount)</td>
+                                            <td class="text-right"><strong>@string.Format("${0}", item.TotalAmount)</strong></td>
+                                            @if (TravelCRM.Controllers.StaticData.DisplayLinkAsPerRole(new List<string>() { RoleType.Admin.ToString() }))
+                                            {
+                                                <td class="text-center"><button type="button" id="btnEditBooking" class="btn btn-outline-warning float-right" onclick="objBookings.editPriceDetail('@item.Id');"><i class="fa fa-edit"></i> Edit</button></td>
+                                            }
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                            <br />
+                            <div class="text-right"><strong>Grand Total: @string.Format("${0}", Model.PriceDetail.Sum(o => o.GetTotal))</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+else
+{
+    <div class="alert alert-danger">
+        Booking details not found.
+    </div>
+}
+<div class="clearfix"></div>

@@ -1,0 +1,191 @@
+﻿
+@model Infrastructure.HelpingModel.BookingEntities.BookingDetails
+@using Infrastructure.HelpingModel.BookingEntities;
+@using Common;
+@using Infrastructure;
+@{
+
+    int outBoundSegCount = 0;
+    int inBoundSegCount = 0;
+    List<FlightSegments> outboudSegments = null;
+    List<FlightSegments> inboundSegments = null;
+}
+
+@if (Model != null)
+{
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-default collapsed-card">
+                <div class="card-header">
+                    <h3 class="card-title">Itinerary Details</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-plus"></i>
+                        </button>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="col-md-12">
+                        <div class="card-body table-responsive p-0">
+                            @if (Model != null && Model.BillingDetails != null && (Model.Segments != null && Model.Segments.Count > 0) && Model.Transaction != null && (Model.PriceDetail != null && Model.PriceDetail.Count > 0))
+                            {
+                                outBoundSegCount = Model.Segments.Where(o => !o.IsReturn).ToList().Count;
+                                inBoundSegCount = Model.Segments.Where(o => o.IsReturn).ToList().Count;
+                                outboudSegments = Model.Segments.Where(o => !o.IsReturn).ToList();
+                                inboundSegments = Model.Segments.Where(o => o.IsReturn).ToList();
+
+                                int counter = 0;
+                                <div class="booked_con">
+                                    @{
+                                        string airline = string.Empty;
+                                        TimeSpan totalLayoverTimeOutbound = new TimeSpan(0, 0, 0);
+                                        TimeSpan totalLayoverTimeInbound = new TimeSpan(0, 0, 0);
+                                        for (int i = 0; i <= outboudSegments.Count - 1; i++)
+                                        {
+                                            FlightSegments item = outboudSegments[i];
+
+                                            airline = Utility.GetAilineName(item.MarketingCode);
+                                            
+                                            <div class="depart_con">
+                                                @if (i == 0)
+                                                {
+                                                    <p class="dept_text">DEPART</p>
+                                                }
+
+                                                @if (i != 0)
+                                                {
+                                                    DateTime arrivalTime = new DateTime(Convert.ToDateTime(outboudSegments[i - 1].ArrivalDateTime).Year, Convert.ToDateTime(outboudSegments[i - 1].ArrivalDateTime).Month, Convert.ToDateTime(outboudSegments[i - 1].ArrivalDateTime).Day, Convert.ToDateTime(outboudSegments[i - 1].ArrivalDateTime).Hour, Convert.ToDateTime(outboudSegments[i - 1].ArrivalDateTime).Minute, 0);
+                                                    TimeSpan layoverTime = new DateTime(Convert.ToDateTime(item.DeptDateTime).Year, Convert.ToDateTime(item.DeptDateTime).Month, Convert.ToDateTime(item.DeptDateTime).Day, Convert.ToDateTime(item.DeptDateTime).Hour, Convert.ToDateTime(item.DeptDateTime).Minute, 0) - arrivalTime;
+                                                    if (layoverTime != TimeSpan.MinValue)
+                                                    {
+                                                        <div class="layover"><span>Layover Time:&nbsp;<i class="fa fa-clock-o" aria-hidden="true"></i>@Utility.GetDuration(layoverTime) layover in @Utility.GetAirportCity(outboudSegments[i - 1].Destination) (@outboudSegments[i - 1].Destination)</span></div>
+
+                                                        totalLayoverTimeOutbound = totalLayoverTimeOutbound + layoverTime;
+                                                    }
+                                                }
+
+                                                <div class="booked_con_detail">
+
+                                                    <div class="book_flight_det">
+                                                        <img src="@string.Format(Utility.Settings.AirlineLogoLocation, item.MarketingCode.ToUpper())" alt="@item.MarketingCode" title="@airline">
+                                                        <span>
+                                                            <p>@airline</p>
+                                                            <p>@item.MarketingCode.ToUpper() @item.FlightNumber</p>
+                                                        </span>
+                                                    </div>
+                                                    <div class="book_con_time">
+                                                        <p><b>@string.Format("{0}", item.DeptDateTime == null ? "--" : (item.DeptDateTime ?? DateTime.Now).ToString("hh:mm tt"))</b> @string.Format("{0}", item.DeptDateTime == null ? "--" : (item.DeptDateTime ?? DateTime.Now).ToString("ddd, dd MMM"))</p>
+                                                        <p><b>@string.Format("{0}", item.ArrivalDateTime == null ? "--" : (item.ArrivalDateTime ?? DateTime.Now).ToString("hh:mm tt"))</b> @string.Format("{0}", item.ArrivalDateTime == null ? "--" : (item.ArrivalDateTime ?? DateTime.Now).ToString("ddd, dd MMM"))</p>
+                                                    </div>
+
+                                                    <div style="padding-left:5px;" class="book_con_time">
+                                                        <p>@Utility.GetAirportCity(item.Origin) (@item.Origin)</p>
+                                                        <p>@Utility.GetAirportCity(item.Destination) (@item.Destination)</p>
+                                                    </div>
+                                                    <div class="class_type">
+                                                        <p>@Utility.GetEnumDescription((CabinType)item.Cabin)</p>
+                                                        <p> <i style="font-family: 'Montserrat'!important, sans-serif;" class="fa fa-clock-o"></i> Non Stop</p>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            if (i == (outboudSegments.Count - 1))
+                                            {
+                                                <div class="grey-row">
+                                                    <div class="first-scc">
+                                                        <i class="fa fa-clock-o" aria-hidden="true"></i> Flight Duration Time: @Utility.GetDuration(TimeSpan.FromMinutes(Model.Flight.OutBoundFlightDuration))
+                                                    </div>
+
+                                                    <div class="third-scc">
+                                                        <i class="fa fa-clock-o" aria-hidden="true"></i> Total Trip: @Utility.GetDuration(TimeSpan.FromMinutes(Model.Flight.OutBoundFlightDuration) + totalLayoverTimeOutbound)
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+
+                                        if (inboundSegments != null && inboundSegments.Count > 0)
+                                        {
+                                            for (int i = 0; i <= inboundSegments.Count - 1; i++)
+                                            {
+                                                FlightSegments item = inboundSegments[i];
+
+                                                airline = Utility.GetAilineName(item.MarketingCode);                                                
+
+                                                <div class="depart_con">
+                                                    @if (i == 0)
+                                                    {
+                                                        <p class="dept_text">RETURN</p>
+                                                    }
+
+                                                    @if (i != 0)
+                                                    {
+                                                        DateTime arrivalTime = new DateTime(Convert.ToDateTime(inboundSegments[i - 1].ArrivalDateTime).Year, Convert.ToDateTime(inboundSegments[i - 1].ArrivalDateTime).Month, Convert.ToDateTime(inboundSegments[i - 1].ArrivalDateTime).Day, Convert.ToDateTime(inboundSegments[i - 1].ArrivalDateTime).Hour, Convert.ToDateTime(inboundSegments[i - 1].ArrivalDateTime).Minute, 0);
+                                                        TimeSpan layoverTime = new DateTime(Convert.ToDateTime(item.DeptDateTime).Year, Convert.ToDateTime(item.DeptDateTime).Month, Convert.ToDateTime(item.DeptDateTime).Day, Convert.ToDateTime(item.DeptDateTime).Hour, Convert.ToDateTime(item.DeptDateTime).Minute, 0) - arrivalTime;
+                                                        if (layoverTime != TimeSpan.MinValue)
+                                                        {
+                                                            <div class="layover"><span>Layover Time:&nbsp;<i class="fa fa-clock-o" aria-hidden="true"></i>@Utility.GetDuration(layoverTime) layover in @Utility.GetAirportCity(inboundSegments[i - 1].Destination) (@inboundSegments[i - 1].Destination)</span></div>
+                                                            totalLayoverTimeInbound = totalLayoverTimeOutbound + layoverTime;
+                                                        }
+                                                    }
+
+                                                    <div class="booked_con_detail">
+
+                                                        <div class="book_flight_det">
+                                                            <img src="@string.Format(Utility.Settings.AirlineLogoLocation, item.MarketingCode.ToUpper())" alt="@item.MarketingCode" title="@airline">
+                                                            <span>
+                                                                <p>@airline</p>
+                                                                <p>@item.MarketingCode.ToUpper() @item.FlightNumber</p>
+                                                            </span>
+                                                        </div>
+                                                        <div class="book_con_time">
+                                                            <p><b>@string.Format("{0}", item.DeptDateTime == null ? "--" : (item.DeptDateTime ?? DateTime.Now).ToString("hh:mm tt"))</b> @string.Format("{0}", item.DeptDateTime == null ? "--" : (item.DeptDateTime ?? DateTime.Now).ToString("ddd, dd MMM"))</p>
+                                                            <p><b>@string.Format("{0}", item.ArrivalDateTime == null ? "--" : (item.ArrivalDateTime ?? DateTime.Now).ToString("hh:mm tt"))</b> @string.Format("{0}", item.ArrivalDateTime == null ? "--" : (item.ArrivalDateTime ?? DateTime.Now).ToString("ddd, dd MMM"))</p>
+                                                        </div>
+
+                                                        <div style="padding-left:5px;" class="book_con_time">
+                                                            <p>@Utility.GetAirportCity(item.Origin) (@item.Origin)</p>
+                                                            <p>@Utility.GetAirportCity(item.Destination) (@item.Destination)</p>
+                                                        </div>
+                                                        <div class="class_type">
+                                                            <p>@Utility.GetEnumDescription((CabinType)item.Cabin)</p>
+                                                            <p> <i style="font-family: 'Montserrat'!important, sans-serif;" class="fa fa-clock-o"></i> Non Stop</p>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                                if (i == (inboundSegments.Count - 1))
+                                                {
+                                                    <div class="grey-row">
+                                                        <div class="first-scc">
+                                                            <i class="fa fa-clock-o" aria-hidden="true"></i> Flight Duration Time: @Utility.GetDuration(TimeSpan.FromMinutes(Model.Flight.InBoundFlightDuration))
+                                                        </div>
+
+                                                        <div class="third-scc">
+                                                            <i class="fa fa-clock-o" aria-hidden="true"></i> Total Trip: @Utility.GetDuration(TimeSpan.FromMinutes(Model.Flight.InBoundFlightDuration) + totalLayoverTimeInbound)
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                        }
+
+                                    }                                    
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+}
+else
+{
+    <div class="alert alert-danger">
+        Booking details not found.
+    </div>
+}
+<div class="clearfix"></div>

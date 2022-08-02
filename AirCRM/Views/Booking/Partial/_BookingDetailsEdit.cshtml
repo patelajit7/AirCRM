@@ -1,0 +1,68 @@
+﻿@model Infrastructure.HelpingModels.ViewModel.BookingsViewModel
+@using Common;
+@using TravelCRM.Controllers;
+@using Infrastructure;
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        @if (Model != null)
+        {
+            <form id="frmBookingDetailsEdit">
+                <div class="modal-header">
+
+                    <h4 class="modal-title">Edit Booking Details</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12 msg" id="divBookingDetailsEditMsg" style="display:none;">
+                        <div id="divBookingDetailsErrorMsg" class="alert alert-danger" style="display: none;"></div>
+                        <div id="divBookingDetailsSuccessMsg" class="alert alert-success" style="display: none;"></div>
+                    </div>
+                    @Html.HiddenFor(m => m.Id)
+                    <div class="form-group">
+                        <label>Agency PNR</label>
+                        @Html.TextBoxFor(model => model.PNR, new { @class = "form-control", @id = "txtPNR", @minlength = "5", @maxlength = "10", @title = "PNR", @placeholder = "Enter Agency PNR" })
+                        @Html.ValidationMessageFor(m => m.PNR, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Airline PNR</label>
+                        @Html.TextBoxFor(model => model.AirlinePNR, new { @class = "form-control", @id = "txtAirlinePNR", @minlength = "5", @maxlength = "10", @title = "Airline PNR", @placeholder = "Enter Airline PNR" })
+                        @Html.ValidationMessageFor(m => m.AirlinePNR, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Booking Source</label>
+                        @Html.DropDownListFor(model => model.BookingSourceType, StaticData.GetBookingSourceType(), new { @class = "form-control", @id = "ddlBookingSource", @title = "Booking Source", @disabled = "disabled" })
+                        @Html.ValidationMessageFor(m => m.BookingSourceType, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Provider</label>
+                        @Html.DropDownListFor(model => model.ProviderId, StaticData.GetProviderType(), new { @class = "form-control", @id = "ddlProvider", @title = "Provider" })
+                        @Html.ValidationMessageFor(m => m.ProviderId, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Portal</label>
+                        @Html.DropDownListFor(model => model.PortalId, StaticData.GetPortalType(), new { @class = "form-control", @id = "ddlPortal", @title = "Portal" })
+                        @Html.ValidationMessageFor(m => m.PortalId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> Close</button>
+                    <button type="button" class="btn btn-outline-primary" id="btnUpdate" onclick="objBookings.updateBooking();"><i class="fa fa-save" aria-hidden="true"></i> Update</button>
+                </div>
+            </form>
+
+        }
+        else
+        {
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    Booking information not found.
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+

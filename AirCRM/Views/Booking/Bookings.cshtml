@@ -1,0 +1,132 @@
+﻿@using TravelCRM.Controllers
+@{
+    ViewBag.Title = "Find Bookings";
+    Layout = "~/Views/Shared/Layout.cshtml";
+}
+<link href="~/Content/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+<div class="content-wrapper">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-2">
+                <label>Search Type</label>
+                @Html.DropDownList("ddlSearchParam", StaticData.GetBookingSearchType(), new { @id = "ddlSearchParam", @class = "form-control rounded-0" })
+            </div>
+            <div class="col-sm-2">
+                <label>Search Value</label>
+                <input type="text" placeholder="Search Value" class="form-control rounded-0" id="txtSearchValue" name="txtSearchValue" />
+            </div>
+            <div class="col-md-2">
+                <label> &nbsp; </label>
+                <button class="btn btn-block btn-primary btn-flat" onclick="objBookings.searchBookingDetailsBySearchType();"> <i class="fas fa-search"></i>  Search </button>
+            </div>
+
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label>From</label>
+                    <div class="input-group date" id="txtSearchFromDate" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" data-target="#txtSearchFromDate" />
+                        <div class="input-group-append" data-target="#txtSearchFromDate" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label>To</label>
+                    <div class="input-group date" id="txtSearchToDate" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" data-target="#txtSearchToDate" />
+                        <div class="input-group-append" data-target="#txtSearchToDate" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <label> &nbsp; </label>
+                <button class="btn btn-block btn-primary btn-flat" onclick="objBookings.searchBookingDetailsByDate();"><i class="fas fa-search"></i>  Search </button>
+            </div>
+
+        </div>
+    </div>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <!-- /.card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Bookings Details</h3>
+                        </div>
+                        <!-- /.card-header -->
+
+                        <div id="FlightBookingSearch"></div>
+
+
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+</div>
+@using (Html.BeginForm("OpenBooking", "Booking", FormMethod.Post, new { id = "frmOpneBooking", @class = "new-added-form" }))
+{
+    <input type="hidden" id="BookingId" name="BookingId" value="0" />
+}
+<div class="modal fade" id="bookingAssignPopup" aria-modal="true" role="dialog">
+</div>
+@section Scripts {
+    @Scripts.Render("~/scripts/validate")
+    @Scripts.Render("~/scripts/booking")
+
+    <script src="~/Content/js/moment.min.js"></script>
+    <script src="~/Content/js/jquery.inputmask.min.js"></script>
+    <script src="~/Content/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script>
+        $('#txtSearchFromDate').datetimepicker({
+            format: 'L'
+        });
+        $('#txtSearchToDate').datetimepicker({
+            format: 'L'
+        });
+        $(document).ready(function () {
+            $('#txtSearchFromDate').datetimepicker('date', moment(formatDate(new Date()), 'MM/DD/YYYY'));
+            $('#txtSearchToDate').datetimepicker('date', moment(formatDate(new Date()), 'MM/DD/YYYY'));
+            objBookings.searchBookingDetailsByDate();
+        });
+        function formatDate(date) {
+            let dd = date.getDate();
+            let mm = date.getMonth() + 1;
+            const yyyy = date.getFullYear();
+            if (dd < 10) {
+                dd = `0${dd}`;
+            }
+            if (mm < 10) {
+                mm = `0${mm}`;
+            }
+
+            date = `${mm}/${dd}/${yyyy}`;
+            return date;
+
+        }
+
+        function openBooking(val) {
+            try {
+                var hdTransId = $("input[name=BookingId]:hidden");
+                hdTransId.val(val);
+                event.preventDefault();
+                $("#frmOpneBooking").submit();
+            }
+            catch (ex) {
+                console.log(ex.stack);
+            }
+        }
+    </script>
+}
+

@@ -1,0 +1,83 @@
+﻿
+@model Infrastructure.HelpingModels.ViewModel.TravellersViewModel
+@using Common;
+@using TravelCRM.Controllers;
+@using Infrastructure;
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        @if (Model != null)
+        {
+            <form id="frmFlightTravellerEdit">
+                <div class="modal-header">
+
+                    <h4 class="modal-title">Edit Traveller Details</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12 msg" id="divFlightTravellerEditMsg" style="display:none;">
+                        <div id="divFlightTravellerEditErrorMsg" class="alert alert-danger" style="display: none;"></div>
+                        <div id="divFlightTravellerEditSuccessMsg" class="alert alert-success" style="display: none;"></div>
+                    </div>
+                    @Html.HiddenFor(m => m.Id)
+                    @Html.HiddenFor(m => m.DOB)
+                    <div class="form-group">
+                        <label>Title</label>
+                        @Html.DropDownListFor(model => model.Title, StaticData.GetTitles(), new { @class = "form-control", @title = "Title" })
+                        @Html.ValidationMessageFor(m => m.PaxType, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>First Name</label>
+                        @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control", @title = "First Name" })
+                        @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Middle Name</label>
+                        @Html.TextBoxFor(model => model.MiddleName, new { @class = "form-control", @title = "Middle Name" })
+                        @Html.ValidationMessageFor(m => m.MiddleName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>LastName</label>
+                        @Html.TextBoxFor(model => model.LastName, new { @class = "form-control", @title = "Last Name" })
+                        @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        @Html.DropDownListFor(model => model.Gender, StaticData.GetGenders(), new { @class = "form-control", @title = "Gender" })
+                        @Html.ValidationMessageFor(m => m.Gender, "", new { @class = "text-danger" })
+                    </div>
+                    @*<div class="form-group">
+            <label>DOB</label>
+            @Html.TextBoxFor(model => model.DOB, new { @class = "form-control", @title = "Base Fare" })
+            @Html.ValidationMessageFor(m => m.DOB, "", new { @class = "text-danger" })
+        </div>*@
+                    <div class="form-group">
+                        <label>Pax Type</label>
+                        @Html.DropDownListFor(model => model.PaxType, StaticData.GetPaxType(), new { @class = "form-control", @title = "Pax Type" })
+                        @Html.ValidationMessageFor(m => m.PaxType, "", new { @class = "text-danger" })
+                    </div>
+
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i> Close</button>
+                    <button type="button" class="btn btn-outline-primary" id="btnUpdate" onclick="objBookings.updateFlightTraveller('@Model.Id');"><i class="fa fa-save" aria-hidden="true"></i> Update</button>
+                </div>
+            </form>
+
+        }
+        else
+        {
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    Booking information not found.
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+
+

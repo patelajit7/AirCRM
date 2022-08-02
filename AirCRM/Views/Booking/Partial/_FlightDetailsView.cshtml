@@ -1,0 +1,76 @@
+﻿
+@model Infrastructure.HelpingModel.BookingEntities.BookingDetails
+@using Common;
+@using Infrastructure;
+
+@if (Model != null)
+{
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-default  collapsed-card">
+                <div class="card-header">
+                    <h3 class="card-title">Flight Details</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-plus"></i>
+                        </button>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="col-md-12">
+                        <div class="card-body table-responsive p-0">
+                            <table class="table table-hover text-nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>Origin</th>
+                                        <th>Dest</th>
+                                        <th>Airline</th>
+                                        <th>Triptype</th>
+                                        <th>Dep.Date</th>
+                                        <th>Ret.Date</th>
+                                        <th>Total Pax</th>
+                                        <th>Adult</th>
+                                        <th>Child</th>
+                                        <th>Infant</th>
+                                        <th>OutB Dur.</th>
+                                        <th>InB.Dur.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>@Model.Flight.Origin</td>
+                                        <td>@Model.Flight.Destination</td>
+                                        <td>@Utility.GetAilineName(Model.Flight.Airline)</td>
+                                        <td>@string.Format("{0}", Model.Flight.TripType == (int)TripType.ROUNDTRIP ? "Roundtrip" : "Oneway")</td>
+                                        <td>@string.Format("{0}", Model.Flight.DeptDate.ToString("dd MMM yyyy"))</td>
+                                        <td>@string.Format("{0}", Model.Flight.ReturnDate != null ? Convert.ToDateTime(Model.Flight.ReturnDate).ToString("dd MMM yyyy") : "--")</td>
+                                        <td>@Model.Flight.TotalPaxCount</td>
+                                        <td>@Model.Flight.AdultCount</td>
+                                        <td>@Model.Flight.ChildCount</td>
+                                        <td>@(Model.Flight.InfantCount + Model.Flight.InfantLapCount)</td>
+                                        <td>@Utility.GetDuration(TimeSpan.FromMinutes(Model.Flight.OutBoundFlightDuration))</td>
+                                        <td>@(Model.Flight.TripType == (int)TripType.ROUNDTRIP ? Utility.GetDuration(TimeSpan.FromMinutes(Model.Flight.InBoundFlightDuration)) : "--")</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                @if (TravelCRM.Controllers.StaticData.DisplayLinkAsPerRole(new List<string>() { RoleType.Admin.ToString() }))
+                {
+                    <div class="card-footer">
+                        <button type="button" id="btnEditBooking" class="btn btn-outline-warning float-right" onclick="objBookings.editBookingDetail();"><i class="fa fa-edit"></i> Edit</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+else
+{
+    <div class="alert alert-danger">
+        Booking details not found.
+    </div>
+}
+<div class="clearfix"></div>

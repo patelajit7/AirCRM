@@ -1,0 +1,130 @@
+﻿
+@model Infrastructure.HelpingModel.BookingEntities.BookingDetails
+@using Common;
+@using Infrastructure;
+
+@if (Model != null)
+{
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-default collapsed-card">
+                <div class="card-header">
+                    <h3 class="card-title">Billing Details</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-plus"></i>
+                        </button>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card card-primary card-outline">
+                                <div class="card-body box-profile">
+                                    <h3 class="profile-username text-center">Customer Details</h3>
+                                    <ul class="list-group list-group-unbordered mb-3">
+                                        <li class="list-group-item listitem-group-padding">
+                                            <b>Name</b> <p class="float-right">@string.Format("{0}", !string.IsNullOrEmpty(Model.BillingDetails.CCHolderName) ? Utility.GetTitleCase(Model.BillingDetails.CCHolderName) : "--")</p>
+                                        </li>
+                                        <li class="list-group-item listitem-group-padding">
+                                            <b>Contact Phone</b> <p class="float-right">@Html.Raw(string.Format("{0}", !string.IsNullOrEmpty(Model.BillingDetails.BillingPhone) ? Model.BillingDetails.BillingPhone : "--"))</p>
+                                        </li>
+                                        <li class="list-group-item listitem-group-padding">
+                                            <b>Address</b> <p class="float-right">
+                                                @string.Format("{0}{1}{2}", !string.IsNullOrEmpty(Model.BillingDetails.AddressLine1) ? Model.BillingDetails.AddressLine1:"--",
+                                                !string.IsNullOrEmpty(Model.BillingDetails.AddressLine2) ? string.Format(", {0}", Model.BillingDetails.AddressLine2.ToUpper()) : "",
+                                                !string.IsNullOrEmpty(Model.BillingDetails.AddressLine3) ? string.Format(", {0}", Model.BillingDetails.AddressLine3.ToUpper()) : ""
+                                                )
+                                            </p>
+                                        </li>
+                                        <li class="list-group-item listitem-group-padding">
+                                            <b>City</b> <p class="float-right">@string.Format("{0}", !string.IsNullOrEmpty(Model.BillingDetails.City) ? Model.BillingDetails.City : "--")</p>
+                                        </li>
+                                        <li class="list-group-item listitem-group-padding">
+                                            <b>State</b> <p class="float-right">@string.Format("{0}", !string.IsNullOrEmpty(Model.BillingDetails.State) ? Model.BillingDetails.State : "--")</p>
+                                        </li>
+                                        <li class="list-group-item listitem-group-padding">
+                                            <b>Country</b> <p class="float-right">@string.Format("{0}", !string.IsNullOrEmpty(Model.BillingDetails.Country) ? Model.BillingDetails.Country : "--")</p>
+                                        </li>
+                                        <li class="list-group-item listitem-group-padding">
+                                            <b>ZipCode</b> <p class="float-right">@Html.Raw(string.Format("{0}", !string.IsNullOrEmpty(Model.BillingDetails.ZipCode) ? Model.BillingDetails.ZipCode : "--"))</p>
+                                        </li>
+                                        <li class="list-group-item listitem-group-padding">
+                                            <b>Email</b> <p class="float-right">@Html.Raw(string.Format("{0}", (!string.IsNullOrEmpty(Model.BillingDetails.Email) ? Model.BillingDetails.Email.ToLower() : "--")))</p>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card card-primary card-outline">
+                                <div class="card-body box-profile">
+                                    <h3 class="profile-username text-center">Card Details</h3>
+                                    <ul class="list-group list-group-unbordered mb-3">
+                                        <li class="list-group-item listitem-group-padding">
+                                            <b>Card Holder Name</b> <p class="float-right">@Html.Raw(string.Format("{0}", !string.IsNullOrEmpty(Model.BillingDetails.CCHolderName) ? Utility.GetTitleCase(Model.BillingDetails.CCHolderName) : "--"))</p>
+                                        </li>
+                                        <li class="list-group-item listitem-group-padding">
+                                            <b>Card Type</b> <p class="float-right">@Html.Raw(string.Format("{0}", (PaymentMethod)Model.BillingDetails.CardType != PaymentMethod.None ? Utility.GetEnumDescription((PaymentMethod)Model.BillingDetails.CardType) : "--"))</p>
+                                        </li>
+
+                                        @if (TravelCRM.Controllers.StaticData.DisplayLinkAsPerRole(new List<string>() { RoleType.Admin.ToString() }))
+                                        {
+                                            <li class="list-group-item listitem-group-padding">
+                                                <b>Card Number</b> <p class="float-right">@string.Format("{0} ", !string.IsNullOrEmpty(Model.BillingDetails.CardNumber) ? Model.BillingDetails.CardNumber : "--")</p>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="list-group-item listitem-group-padding">
+                                                <b>Card Number</b> <p class="float-right">@string.Format("XXXX XXXX XXXX {0} ", !string.IsNullOrEmpty(Model.BillingDetails.CardNumber) ? @Utility.GetCreditCardLastDigits(Model.BillingDetails.CardNumber) : "--")</p>
+                                            </li>
+                                        }
+                                        @if (TravelCRM.Controllers.StaticData.DisplayLinkAsPerRole(new List<string>() { RoleType.Admin.ToString() }))
+                                        {
+                                            <li class="list-group-item listitem-group-padding">
+                                                <b>Expiry Date</b> <p class="float-right">@Html.Raw(Model.BillingDetails.ExpiryMonth == 0 && Model.BillingDetails.ExpiryYear == 0 ? "--/--" : string.Format("{0:D2}/{1}", Model.BillingDetails.ExpiryMonth, Model.BillingDetails.ExpiryYear))</p>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="list-group-item listitem-group-padding">
+                                                <b>Expiry Date</b> <p class="float-right">@Html.Raw(Model.BillingDetails.ExpiryMonth == 0 && Model.BillingDetails.ExpiryYear == 0 ? "--/--" : "**/**"))</p>
+                                            </li>
+                                        }
+                                        @if (TravelCRM.Controllers.StaticData.DisplayLinkAsPerRole(new List<string>() { RoleType.Admin.ToString() }))
+                                        {
+                                            <li class="list-group-item listitem-group-padding">
+                                                <b>CCV Number</b> <p class="float-right">@string.Format("{0}", !string.IsNullOrEmpty(Model.BillingDetails.CVVNumber) ? Model.BillingDetails.CVVNumber : "--")</p>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="list-group-item listitem-group-padding">
+                                                <b>CCV Number</b> <p class="float-right">@string.Format("{0}", !string.IsNullOrEmpty(Model.BillingDetails.CVVNumber) ? "***" : "--")</p>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (TravelCRM.Controllers.StaticData.DisplayLinkAsPerRole(new List<string>() { RoleType.Admin.ToString() }))
+                {
+                    <div class="card-footer">
+                        <button type="button" id="btnEditBooking" class="btn btn-outline-warning float-right" onclick="objBookings.editBillingDetail('@Model.BillingDetails.TransactionId');"><i class="fa fa-edit"></i> Edit</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+else
+{
+    <div class="alert alert-danger">
+        Booking details not found.
+    </div>
+}
+<div class="clearfix"></div>
